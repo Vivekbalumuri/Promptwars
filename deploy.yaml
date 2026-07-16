@@ -1,0 +1,33 @@
+# Facility Management Dashboard Continuous Deployment Workflow
+name: Enterprise Core Deployment Pipeline
+
+on:
+  push:
+    branches: [ main, master ] # Fires only when code changes are pushed to these main branches
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Code Telemetry Payload
+        uses: actions/checkout@v4
+
+      - name: Initialize Node.js Framework Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install Architecture Dependency Modules
+        run: npm ci
+
+      - name: Compile and Build Structural Layout Assets
+        # Injecting the token during compile time inside the runner environment matrix
+        env:
+          REACT_APP_GEMINI_API_KEY: ${{ secrets.REACT_APP_GEMINI_API_KEY }}
+        run: npm run build
+
+      - name: Global Edge Grid Deployment Routing
+        # This mocks standard framework pushes; Vercel handles this out-of-the-box on push.
+        run: echo "Static asset layers compiled. Transferring payload arrays to distribution points."
