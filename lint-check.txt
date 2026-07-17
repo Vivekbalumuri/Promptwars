@@ -1,0 +1,116 @@
+
+> prompt-wars-dashboard@1.0.0 lint
+> eslint "**/*.{js,jsx,ts,tsx}" --max-warnings=0
+
+
+d:\prompt wars\app.jsx
+     2:8    error  'PropTypes' is defined but never used                                   no-unused-vars
+   197:22   error  '_' is defined but never used                                           no-unused-vars
+   698:25   error  'channels' is missing in props validation                               react/prop-types
+   698:35   error  'activeChannel' is missing in props validation                          react/prop-types
+   698:50   error  'setActiveChannel' is missing in props validation                       react/prop-types
+   698:68   error  'channelInputs' is missing in props validation                          react/prop-types
+   698:83   error  'setChannelInputs' is missing in props validation                       react/prop-types
+   698:101  error  'channelHistories' is missing in props validation                       react/prop-types
+   698:119  error  'sendRadioMessage' is missing in props validation                       react/prop-types
+   698:137  error  'syncChannelWithGenAI' is missing in props validation                   react/prop-types
+   698:159  error  'channelLoading' is missing in props validation                         react/prop-types
+   699:33   error  'channels.find' is missing in props validation                          react/prop-types
+   723:21   error  'channels.map' is missing in props validation                           react/prop-types
+   766:46   error  'channelHistories[].map' is missing in props validation                 react/prop-types
+   818:21   error  'avgLoad' is missing in props validation                                react/prop-types
+   818:30   error  'seatsFilled' is missing in props validation                            react/prop-types
+   818:43   error  'openGates' is missing in props validation                              react/prop-types
+   818:54   error  'closedGates' is missing in props validation                            react/prop-types
+   818:67   error  'criticalGates' is missing in props validation                          react/prop-types
+   818:82   error  'cautionGates' is missing in props validation                           react/prop-types
+   818:96   error  'flowRate' is missing in props validation                               react/prop-types
+   818:106  error  'latestBrief' is missing in props validation                            react/prop-types
+   818:119  error  'briefLoading' is missing in props validation                           react/prop-types
+   818:133  error  'onOpenAssistant' is missing in props validation                        react/prop-types
+   818:150  error  'sevPill' is missing in props validation                                react/prop-types
+   818:150  error  'sevPill' is defined but never used                                     no-unused-vars
+   818:159  error  'weather' is missing in props validation                                react/prop-types
+   825:71   error  'openGates.length' is missing in props validation                       react/prop-types
+   825:112  error  'closedGates.length' is missing in props validation                     react/prop-types
+   825:140  error  'closedGates.length' is missing in props validation                     react/prop-types
+   825:206  error  'closedGates.length' is missing in props validation                     react/prop-types
+   830:74   error  'weather.tempF' is missing in props validation                          react/prop-types
+   830:106  error  'weather.tempF' is missing in props validation                          react/prop-types
+   830:205  error  'weather.tempF' is missing in props validation                          react/prop-types
+   832:76   error  'criticalGates.length' is missing in props validation                   react/prop-types
+   832:98   error  'cautionGates.length' is missing in props validation                    react/prop-types
+   832:128  error  'criticalGates.length' is missing in props validation                   react/prop-types
+   832:160  error  'cautionGates.length' is missing in props validation                    react/prop-types
+   832:216  error  'criticalGates.length' is missing in props validation                   react/prop-types
+   844:139  error  'latestBrief.summary' is missing in props validation                    react/prop-types
+   857:22   error  'gates' is missing in props validation                                  react/prop-types
+   857:29   error  'sevPill' is missing in props validation                                react/prop-types
+   857:38   error  'executeTrafficReroute' is missing in props validation                  react/prop-types
+   875:20   error  'gates.map' is missing in props validation                              react/prop-types
+   910:26   error  'briefs' is missing in props validation                                 react/prop-types
+   910:34   error  'briefLoading' is missing in props validation                           react/prop-types
+   910:48   error  'generateBrief' is missing in props validation                          react/prop-types
+   910:63   error  'chatMessages' is missing in props validation                           react/prop-types
+   910:77   error  'chatInput' is missing in props validation                              react/prop-types
+   910:88   error  'setChatInput' is missing in props validation                           react/prop-types
+   910:102  error  'chatLoading' is missing in props validation                            react/prop-types
+   910:115  error  'askAI' is missing in props validation                                  react/prop-types
+   910:122  error  'gates' is missing in props validation                                  react/prop-types
+   910:129  error  'activeRerouteRecommendation' is missing in props validation            react/prop-types
+   910:158  error  'handleAcceptAIRecommendation' is missing in props validation           react/prop-types
+   910:188  error  'forecastActive' is missing in props validation                         react/prop-types
+   912:26   error  'gates.find' is missing in props validation                             react/prop-types
+   930:40   error  'activeRerouteRecommendation.active' is missing in props validation     react/prop-types
+   934:217  error  'activeRerouteRecommendation.sourceId' is missing in props validation   react/prop-types
+   934:316  error  'activeRerouteRecommendation.targetId' is missing in props validation   react/prop-types
+   946:27   error  'chatMessages.length' is missing in props validation                    react/prop-types
+   946:150  error  Comments inside children section of tag should be placed inside braces  react/jsx-no-comment-textnodes
+   947:27   error  'chatMessages.map' is missing in props validation                       react/prop-types
+   952:100  error  Comments inside children section of tag should be placed inside braces  react/jsx-no-comment-textnodes
+   953:21   error  'briefs.map' is missing in props validation                             react/prop-types
+   981:26   error  'incidentType' is missing in props validation                           react/prop-types
+   981:40   error  'setIncidentType' is missing in props validation                        react/prop-types
+   981:57   error  'incidentLocation' is missing in props validation                       react/prop-types
+   981:75   error  'setIncidentLocation' is missing in props validation                    react/prop-types
+   981:96   error  'incidentText' is missing in props validation                           react/prop-types
+   981:110  error  'setIncidentText' is missing in props validation                        react/prop-types
+   981:127  error  'draftIncident' is missing in props validation                          react/prop-types
+   981:142  error  'incidentLoading' is missing in props validation                        react/prop-types
+   981:159  error  'incidentLog' is missing in props validation                            react/prop-types
+   981:172  error  'triggerUnitDispatch' is missing in props validation                    react/prop-types
+   981:193  error  'toggleSopStep' is missing in props validation                          react/prop-types
+  1002:84   error  'incidentText.trim' is missing in props validation                      react/prop-types
+  1005:22   error  'incidentLog.map' is missing in props validation                        react/prop-types
+
+d:\prompt wars\src\__tests__\Card.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\SectionTitle.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+  8:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\StatCard.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+  8:3  error  'expect' is not defined  no-undef
+  9:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\accessibility.test.jsx
+  6:1  error  'test' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\app.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\components\Overview.jsx
+  10:150  error  'sevPill' is defined but never used   no-unused-vars
+  10:171  error  'SEVERITY' is defined but never used  no-unused-vars
+
+d:\prompt wars\src\utils\api.js
+  16:65  error  'process' is not defined  no-undef
+
+✖ 93 problems (93 errors, 0 warnings)
+

@@ -1,27 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import PropTypes from "prop-types";
 import {
   Send,
-  FileText,
   LayoutGrid,
   DoorOpen,
   Sparkles,
   ClipboardList,
   RefreshCw,
   Loader2,
-  CheckCircle2,
-  Clipboard,
-  ChevronRight,
-  Users,
-  XCircle,
-  Shuffle,
-  Truck,
-  Shield,
-  Activity,
-  Map as MapIcon,
   AlertTriangle,
   Camera,
   LineChart,
-  CheckSquare,
   FileSpreadsheet,
   MessageSquare,
   Radio,
@@ -31,7 +20,10 @@ import './src/styles.css';
 import SectionTitle from './src/components/SectionTitle';
 import Card from './src/components/Card';
 import StatCard from './src/components/StatCard';
+import Overview from './src/components/Overview';
+import GatesView from './src/components/GatesView';
 import { callGeminiSafe } from './src/utils/api';
+import { severityFor, fmtClock, stripFence, initialGates } from './src/utils/helpers';
 
 // ---------------------------------------------------------------------------
 // Enterprise Technical Layout Design System (Precision Minimalist Theme)
@@ -87,39 +79,33 @@ if (typeof document !== "undefined") {
     .custom-scrollbar::-webkit-scrollbar-track { background: #1A1F26; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #2C3540; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    @keyframes football-roll {
+      0%   { transform: translate(-50%, -50%) translate(-18px, 0px) rotate(0deg); }
+      25%  { transform: translate(-50%, -50%) translate(-4px, -8px) rotate(90deg); }
+      50%  { transform: translate(-50%, -50%) translate(18px, 0px) rotate(180deg); }
+      75%  { transform: translate(-50%, -50%) translate(-4px, 8px) rotate(270deg); }
+      100% { transform: translate(-50%, -50%) translate(-18px, 0px) rotate(360deg); }
+    }
+    .football-icon {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      font-size: 15px;
+      animation: football-roll 3.2s ease-in-out infinite;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+    }
+
+    @keyframes live-dot-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+      50% { box-shadow: 0 0 6px 2px rgba(16,185,129,0.35); }
+    }
+    .live-status-dot { animation: live-dot-glow 1.8s infinite ease-in-out; }
   `;
   document.head.appendChild(style);
 }
 
-function severityFor(density) {
-  if (density >= 72) return "critical";
-  if (density >= 45) return "caution";
-  return "normal";
-}
-
-function initialGates() {
-  return GATES_SEED.map((name, i) => ({
-    id: name[5],
-    name,
-    density: 25 + Math.round(Math.random() * 20),
-    queue: 2,
-    trend: "steady",
-    staff: 4 + Math.round(Math.random() * 4),
-    open: i !== 6,
-  }));
-}
-
-function fmtClock(min) {
-  if (min <= 45) return `${min}'`;
-  if (min === 46) return "HT";
-  return `${min - 1}'`;
-}
-
 // Network API callers are implemented in `src/utils/api.js` (callGeminiSafe)
-
-function stripFence(text) {
-  return text.replace(/```json/gi, "").replace(/```/g, "").trim();
-}
 
 const TABS = [
   { id: "overview", label: "Overview Map", icon: LayoutGrid },
@@ -516,6 +502,7 @@ export default function StadiumOpsControl() {
 
   return (
     <main role="main" aria-label="Stadium Operations Control" style={{ background: C.bg, color: C.text, minHeight: "100vh", fontFamily: "system-ui, -apple-system, sans-serif", paddingBottom: 40 }}>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       
       {/* Top Professional Operational Navigation Strip */}
       <div style={{ borderBottom: `1px solid ${C.border}`, background: C.panel, padding: "14px 24px" }}>
@@ -542,7 +529,7 @@ export default function StadiumOpsControl() {
         {/* Left Side Control Panel Columns */}
         <div style={{ width: 200, flexShrink: 0, display: "flex", flexDirection: "column", gap: 6 }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, padding: "0 6px 6px 6px", borderBottom: `1px solid ${C.border}`, letterSpacing: "0.05em" }}>OPERATIONAL VIEWPORTS</div>
-          <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <nav aria-label="Operational viewports" style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {TABS.map((t) => {
               const Icon = t.icon;
               const active = tab === t.id;
@@ -550,6 +537,7 @@ export default function StadiumOpsControl() {
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
+                  aria-current={active ? "page" : undefined}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -623,7 +611,7 @@ export default function StadiumOpsControl() {
         </div>
 
         {/* Workspace Display Core Canvas Area */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div id="main-content" tabIndex={-1} style={{ flex: 1, minWidth: 0 }}>
           {tab === "overview" && (
             <Overview
               avgLoad={avgLoad}
@@ -638,6 +626,8 @@ export default function StadiumOpsControl() {
               onOpenAssistant={() => setTab("assistant")}
               sevPill={sevPill}
               weather={weather}
+              C={C}
+              SEVERITY={SEVERITY}
             />
           )}
           
@@ -646,6 +636,8 @@ export default function StadiumOpsControl() {
               gates={gates} 
               sevPill={sevPill} 
               executeTrafficReroute={executeTrafficReroute}
+              C={C}
+              SEVERITY={SEVERITY}
             />
           )}
           
@@ -771,7 +763,7 @@ function CommsHubView({ channels, activeChannel, setActiveChannel, channelInputs
               <span style={{ fontSize: 11, fontWeight: 700, color: "#FFF" }}>{selectedChan?.label}</span>
               <span style={{ fontSize: 9, color: C.muted, marginLeft: 10 }}>[GEN AI TRANSMISSION STREAMING ENGINE]</span>
             </div>
-            <span style={{ fontSize: 9, padding: "2px 6px", background: channelLoading ? "#78350F" : "#064E3B", color: channelLoading ? "#F59E0B" : "#10B981", border: `1px solid ${channelLoading ? "#D97706" : "#059669"}`, fontWeight: 700 }}>
+            <span className={!channelLoading ? "live-status-dot" : ""} style={{ fontSize: 9, padding: "2px 6px", background: channelLoading ? "#78350F" : "#064E3B", color: channelLoading ? "#F59E0B" : "#10B981", border: `1px solid ${channelLoading ? "#D97706" : "#059669"}`, fontWeight: 700 }}>
               {channelLoading ? "SYNTHESIZING FLOW..." : "RADIO LINK OK"}
             </span>
           </div>
@@ -827,99 +819,9 @@ function CommsHubView({ channels, activeChannel, setActiveChannel, channelInputs
   );
 }
 
-// Core UI primitives are provided as separate components in `src/components`.
-
-function Overview({ avgLoad, seatsFilled, openGates, closedGates, criticalGates, cautionGates, flowRate, latestBrief, briefLoading, onOpenAssistant, sevPill, weather }) {
-  const occupancyPct = Math.round((seatsFilled / CAPACITY) * 100);
-  return (
-    <div>
-      <SectionTitle>Aggregated System Overview</SectionTitle>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 12 }}>
-        <StatCard label="FACILITY CAPACITY METRIC" value={`${seatsFilled.toLocaleString()} / ${CAPACITY.toLocaleString()}`} sub={`${occupancyPct}% Aggregate Footprint`} alertActive={occupancyPct >= 95} />
-        <StatCard label="INGRESS RADIAL PATHWAYS" value={`${openGates.length} OPEN CHANNELS`} sub={closedGates.length > 0 ? `${closedGates.length} LOCKED UNITS` : "All ports processing"} warn={closedGates.length > 0} />
-        <StatCard label="MEAN PROFILE SATURATION" value={avgLoad + "% DENSITY"} sub="System matrix average coefficient" warn={avgLoad >= 65} />
-      </div>
-      
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }}>
-        <StatCard label="MICROCLIMATE TEMPERATURE LOG" value={`${weather.tempF}°F THERMAL`} sub={weather.tempF >= 92 ? "EXCESS ATMOSPHERIC VALUE WARNING" : "Basal atmospheric level"} alertActive={weather.tempF >= 92} />
-        <StatCard label="INGRESS VELOCITY COEFFICIENT" value={`${flowRate.toLocaleString()} PKT/MIN`} sub="Active entries calculation rate" />
-        <StatCard label="SYSTEM AUDIT EXTRAPOLATIONS" value={criticalGates.length + cautionGates.length} sub={`${criticalGates.length} Alerts · ${cautionGates.length} Secondary Warnings`} alertActive={criticalGates.length > 0} />
-      </div>
-
-      <Card style={{ background: "#202731", border: `1px solid ${C.borderThick}` }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ background: "rgba(56, 189, 248, 0.1)", padding: 6, border: `1px solid ${C.accent}`, height: "max-content" }}>
-              <Sparkles size={14} color={C.accent} className={briefLoading ? "animate-spin-slow" : ""} />
-            </div>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: C.accent, letterSpacing: "0.04em" }}>AUTOMATED LOG COMPILER EXECUTIVE BROADCAST BRIEFING</div>
-              <div style={{ fontSize: 12, lineHeight: 1.45, marginTop: 4, color: "#E2E8F0" }} aria-live="polite">
-                {briefLoading && !latestBrief ? "Constructing data tree structures from active telemetry matrix models..." : latestBrief?.summary}
-              </div>
-            </div>
-          </div>
-          <button onClick={onOpenAssistant} style={{ display: "flex", alignItems: "center", gap: 2, fontSize: 11, color: C.accent, background: "none", border: "none", cursor: "pointer", flexShrink: 0, fontWeight: 700 }}>
-            ACCESS MANAGEMENT WORKSPACE <ChevronRight size={12} />
-          </button>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-function GatesView({ gates, sevPill, executeTrafficReroute }) {
-  return (
-    <div>
-      <SectionTitle>Real-Time Ingress Perimeters Log</SectionTitle>
-      <Card style={{ padding: 0, overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-          <thead>
-            <tr style={{ textAlign: "left", color: C.muted, background: "#1F2630", borderBottom: `1px solid ${C.border}` }}>
-              <th style={{ padding: "10px 14px", fontWeight: 600 }}>TARGET IDENTIFICATION INDEX</th>
-              <th style={{ padding: "10px 14px", fontWeight: 600 }}>CAPACITY ENVELOPE</th>
-              <th style={{ padding: "10px 14px", fontWeight: 600 }}>DELAY CALCULATION</th>
-              <th style={{ padding: "10px 14px", fontWeight: 600 }}>FLOW INDEX PATH</th>
-              <th style={{ padding: "10px 14px", fontWeight: 600 }}>ASSIGNED RESPONDERS</th>
-              <th style={{ padding: "10px 14px", fontWeight: 600 }}>AUDIT STATUS</th>
-              <th style={{ padding: "10px 14px", fontWeight: 600, textAlign: "right" }}>CORE DIRECTIVES</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gates.map((g) => {
-              const isHighDensity = g.open && severityFor(g.density) === "critical";
-              return (
-                <tr key={g.id} style={{ borderBottom: `1px solid ${C.border}`, background: g.open ? "transparent" : "#161B22" }}>
-                  <td style={{ padding: "12px 14px", fontWeight: 600, color: "#FFF" }}>{g.name}</td>
-                  <td style={{ padding: "12px 14px", fontWeight: 700, color: isHighDensity ? SEVERITY.critical.color : "#FFF" }}>{g.open ? `${g.density}%` : "OFFLINE"}</td>
-                  <td style={{ padding: "12px 14px", color: C.muted }}>{g.open ? `${g.queue}M TOTAL` : "---"}</td>
-                  <td style={{ padding: "12px 14px", fontWeight: 600, color: g.trend === "rising" ? SEVERITY.critical.color : g.trend === "falling" ? "#10B981" : C.muted }}>{g.open ? g.trend.toUpperCase() : "---"}</td>
-                  <td style={{ padding: "12px 14px" }}>
-                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                      <Users size={12} color={C.muted} /> {g.open ? `${g.staff} PERSONNEL` : "0 STANDBY"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "12px 14px" }}>
-                    {g.open ? sevPill(severityFor(g.density)) : (
-                      <span style={{ fontSize: 9, padding: "2px 4px", border: `1px solid ${C.faint}`, color: C.muted, fontWeight: 600 }}>SECURED</span>
-                    )}
-                  </td>
-                  <td style={{ padding: "12px 14px", textAlign: "right" }}>
-                    {isHighDensity ? (
-                      <button onClick={() => executeTrafficReroute(g.id)} style={{ background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, padding: "3px 6px", borderRadius: 2, fontSize: 10, fontWeight: 700, cursor: "pointer" }}>
-                        SHUNT VOLUME BUFFER
-                      </button>
-                    ) : g.open ? <span style={{ color: C.faint, fontSize: 11 }}>IN COMPLIANCE</span> : <span style={{ color: SEVERITY.critical.color, fontSize: 11 }}>RESTRICTED</span>}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </Card>
-    </div>
-  );
-}
+// Core UI primitives (Card, SectionTitle, StatCard, Overview, GatesView) are
+// provided as separate, independently-tested components in `src/components`
+// and imported at the top of this file — they are not redefined here.
 
 function AssistantView({ briefs, briefLoading, generateBrief, chatMessages, chatInput, setChatInput, chatLoading, askAI, gates, activeRerouteRecommendation, handleAcceptAIRecommendation, forecastActive }) {
   const getGateStyles = (gateId) => {
@@ -977,7 +879,10 @@ function AssistantView({ briefs, briefLoading, generateBrief, chatMessages, chat
               {["A", "B", "H", "G"].map(id => (
                 <div key={id} className={getGateStyles(id).pulse ? "pulse-alert" : ""} style={{ color: getGateStyles(id).text, border: getGateStyles(id).border, padding: 4, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: 10, fontWeight: 700 }}><div>GATE {id}</div><span style={{ fontSize: 8, color: C.muted }}>{getGateStyles(id).label}</span></div>
               ))}
-              <div style={{ color: "#FFF", border: `1px solid ${C.borderThick}`, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 11, fontWeight: 700, background: "#1F2937" }}><span style={{ fontSize: 9, fontWeight: 800 }}>ARENA BOWL</span></div>
+              <div style={{ color: "#FFF", border: `1px solid ${C.borderThick}`, display: "flex", justifyContent: "center", alignItems: "center", fontSize: 11, fontWeight: 700, background: "#1F2937", position: "relative", overflow: "hidden" }}>
+                <span style={{ fontSize: 9, fontWeight: 800 }}>ARENA BOWL</span>
+                <span className="football-icon" role="img" aria-label="football">⚽</span>
+              </div>
               {["C", "F", "E", "D"].map(id => (
                 <div key={id} className={getGateStyles(id).pulse ? "pulse-alert" : ""} style={{ color: getGateStyles(id).text, border: getGateStyles(id).border, padding: 4, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", fontSize: 10, fontWeight: 700 }}><div>GATE {id}</div><span style={{ fontSize: 8, color: C.muted }}>{getGateStyles(id).label}</span></div>
               ))}
@@ -997,13 +902,13 @@ function IncidentsView({ incidentType, setIncidentType, incidentLocation, setInc
       <Card style={{ marginBottom: 20 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
           <div>
-            <label style={{ display: 'none' }} htmlFor="incidentTypeSelect">Incident Type</label>
+            <label className="sr-only" htmlFor="incidentTypeSelect">Incident Type</label>
             <select id="incidentTypeSelect" aria-label="Incident type" value={incidentType} onChange={(e) => setIncidentType(e.target.value)} style={{ width: "100%", fontSize: 12, background: "#000", color: "#FFF", padding: "8px", border: `1px solid ${C.border}` }}>
               {INCIDENT_TYPES.map((t) => <option key={t} value={t}>{t.toUpperCase()} PROTOCOL</option>)}
             </select>
           </div>
           <div>
-            <label style={{ display: 'none' }} htmlFor="incidentLocationSelect">Incident Location</label>
+            <label className="sr-only" htmlFor="incidentLocationSelect">Incident Location</label>
             <select id="incidentLocationSelect" aria-label="Incident location" value={incidentLocation} onChange={(e) => setIncidentLocation(e.target.value)} style={{ width: "100%", fontSize: 12, background: "#000", color: "#FFF", padding: "8px", border: `1px solid ${C.border}` }}>
               {GATES_SEED.map((g) => <option key={g} value={g}>{g.toUpperCase()}</option>)}
             </select>

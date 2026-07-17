@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Card from './Card';
 
-const StatCard = ({ label, value, sub, warn, alertActive }) => {
+const StatCard = React.memo(function StatCard({ label, value, sub, warn, alertActive }) {
   let indicatorColor = '#2C3540';
   if (warn) indicatorColor = '#D97706';
   if (alertActive) indicatorColor = '#DC2626';
@@ -14,7 +14,7 @@ const StatCard = ({ label, value, sub, warn, alertActive }) => {
       {sub && <div style={{ fontSize: 11, color: alertActive ? '#EF4444' : warn ? '#F59E0B' : '#8A99AD', marginTop: 4, fontWeight: 600 }}>{sub}</div>}
     </Card>
   );
-};
+});
 
 StatCard.propTypes = {
   label: PropTypes.string,

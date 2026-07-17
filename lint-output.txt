@@ -1,0 +1,224 @@
+
+> prompt-wars-dashboard@1.0.0 lint
+> eslint "**/*.{js,jsx,ts,tsx}" --max-warnings=0
+
+
+d:\prompt wars\app.jsx
+     4:3    error  'FileText' is defined but never used                                    no-unused-vars
+    11:3    error  'CheckCircle2' is defined but never used                                no-unused-vars
+    12:3    error  'Clipboard' is defined but never used                                   no-unused-vars
+    15:3    error  'XCircle' is defined but never used                                     no-unused-vars
+    16:3    error  'Shuffle' is defined but never used                                     no-unused-vars
+    17:3    error  'Truck' is defined but never used                                       no-unused-vars
+    18:3    error  'Shield' is defined but never used                                      no-unused-vars
+    19:3    error  'Activity' is defined but never used                                    no-unused-vars
+    20:10   error  'MapIcon' is defined but never used                                     no-unused-vars
+    24:3    error  'CheckSquare' is defined but never used                                 no-unused-vars
+   211:22   error  '_' is defined but never used                                           no-unused-vars
+   712:25   error  'channels' is missing in props validation                               react/prop-types
+   712:35   error  'activeChannel' is missing in props validation                          react/prop-types
+   712:50   error  'setActiveChannel' is missing in props validation                       react/prop-types
+   712:68   error  'channelInputs' is missing in props validation                          react/prop-types
+   712:83   error  'setChannelInputs' is missing in props validation                       react/prop-types
+   712:101  error  'channelHistories' is missing in props validation                       react/prop-types
+   712:119  error  'sendRadioMessage' is missing in props validation                       react/prop-types
+   712:137  error  'syncChannelWithGenAI' is missing in props validation                   react/prop-types
+   712:159  error  'channelLoading' is missing in props validation                         react/prop-types
+   713:33   error  'channels.find' is missing in props validation                          react/prop-types
+   737:21   error  'channels.map' is missing in props validation                           react/prop-types
+   780:46   error  'channelHistories[].map' is missing in props validation                 react/prop-types
+   832:21   error  'avgLoad' is missing in props validation                                react/prop-types
+   832:30   error  'seatsFilled' is missing in props validation                            react/prop-types
+   832:43   error  'openGates' is missing in props validation                              react/prop-types
+   832:54   error  'closedGates' is missing in props validation                            react/prop-types
+   832:67   error  'criticalGates' is missing in props validation                          react/prop-types
+   832:82   error  'cautionGates' is missing in props validation                           react/prop-types
+   832:96   error  'flowRate' is missing in props validation                               react/prop-types
+   832:106  error  'latestBrief' is missing in props validation                            react/prop-types
+   832:119  error  'briefLoading' is missing in props validation                           react/prop-types
+   832:133  error  'onOpenAssistant' is missing in props validation                        react/prop-types
+   832:150  error  'sevPill' is missing in props validation                                react/prop-types
+   832:150  error  'sevPill' is defined but never used                                     no-unused-vars
+   832:159  error  'weather' is missing in props validation                                react/prop-types
+   839:71   error  'openGates.length' is missing in props validation                       react/prop-types
+   839:112  error  'closedGates.length' is missing in props validation                     react/prop-types
+   839:140  error  'closedGates.length' is missing in props validation                     react/prop-types
+   839:206  error  'closedGates.length' is missing in props validation                     react/prop-types
+   844:74   error  'weather.tempF' is missing in props validation                          react/prop-types
+   844:106  error  'weather.tempF' is missing in props validation                          react/prop-types
+   844:205  error  'weather.tempF' is missing in props validation                          react/prop-types
+   846:76   error  'criticalGates.length' is missing in props validation                   react/prop-types
+   846:98   error  'cautionGates.length' is missing in props validation                    react/prop-types
+   846:128  error  'criticalGates.length' is missing in props validation                   react/prop-types
+   846:160  error  'cautionGates.length' is missing in props validation                    react/prop-types
+   846:216  error  'criticalGates.length' is missing in props validation                   react/prop-types
+   858:139  error  'latestBrief.summary' is missing in props validation                    react/prop-types
+   871:22   error  'gates' is missing in props validation                                  react/prop-types
+   871:29   error  'sevPill' is missing in props validation                                react/prop-types
+   871:38   error  'executeTrafficReroute' is missing in props validation                  react/prop-types
+   889:20   error  'gates.map' is missing in props validation                              react/prop-types
+   924:26   error  'briefs' is missing in props validation                                 react/prop-types
+   924:34   error  'briefLoading' is missing in props validation                           react/prop-types
+   924:48   error  'generateBrief' is missing in props validation                          react/prop-types
+   924:63   error  'chatMessages' is missing in props validation                           react/prop-types
+   924:77   error  'chatInput' is missing in props validation                              react/prop-types
+   924:88   error  'setChatInput' is missing in props validation                           react/prop-types
+   924:102  error  'chatLoading' is missing in props validation                            react/prop-types
+   924:115  error  'askAI' is missing in props validation                                  react/prop-types
+   924:122  error  'gates' is missing in props validation                                  react/prop-types
+   924:129  error  'activeRerouteRecommendation' is missing in props validation            react/prop-types
+   924:158  error  'handleAcceptAIRecommendation' is missing in props validation           react/prop-types
+   924:188  error  'forecastActive' is missing in props validation                         react/prop-types
+   926:26   error  'gates.find' is missing in props validation                             react/prop-types
+   944:40   error  'activeRerouteRecommendation.active' is missing in props validation     react/prop-types
+   948:217  error  'activeRerouteRecommendation.sourceId' is missing in props validation   react/prop-types
+   948:316  error  'activeRerouteRecommendation.targetId' is missing in props validation   react/prop-types
+   960:27   error  'chatMessages.length' is missing in props validation                    react/prop-types
+   960:150  error  Comments inside children section of tag should be placed inside braces  react/jsx-no-comment-textnodes
+   961:27   error  'chatMessages.map' is missing in props validation                       react/prop-types
+   966:100  error  Comments inside children section of tag should be placed inside braces  react/jsx-no-comment-textnodes
+   967:21   error  'briefs.map' is missing in props validation                             react/prop-types
+   992:26   error  'incidentType' is missing in props validation                           react/prop-types
+   992:40   error  'setIncidentType' is missing in props validation                        react/prop-types
+   992:57   error  'incidentLocation' is missing in props validation                       react/prop-types
+   992:75   error  'setIncidentLocation' is missing in props validation                    react/prop-types
+   992:96   error  'incidentText' is missing in props validation                           react/prop-types
+   992:110  error  'setIncidentText' is missing in props validation                        react/prop-types
+   992:127  error  'draftIncident' is missing in props validation                          react/prop-types
+   992:142  error  'incidentLoading' is missing in props validation                        react/prop-types
+   992:159  error  'incidentLog' is missing in props validation                            react/prop-types
+   992:172  error  'triggerUnitDispatch' is missing in props validation                    react/prop-types
+   992:193  error  'toggleSopStep' is missing in props validation                          react/prop-types
+  1013:84   error  'incidentText.trim' is missing in props validation                      react/prop-types
+  1016:22   error  'incidentLog.map' is missing in props validation                        react/prop-types
+
+d:\prompt wars\dist\assets\index-D_Im1Vv6.js
+    9:1588   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+    9:4646   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   17:376    error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   25:928    error  'setImmediate' is not defined                                              no-undef
+   33:596    error  Unexpected combined character in character class                           no-misleading-character-class
+   33:3023   error  Unnecessary escape character: \-                                           no-useless-escape
+   33:4912   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:202    error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   37:1216   error  Empty block statement                                                      no-empty
+   37:2389   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:3868   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:3909   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:4076   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:4103   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:4694   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:6030   error  'MSApp' is not defined                                                     no-undef
+   37:6078   error  'MSApp' is not defined                                                     no-undef
+   37:7458   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:7551   error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:8633   error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   37:9654   error  Expected to return a value in method 'get'                                 getter-return
+   37:9787   error  'r' is defined but never used                                              no-unused-vars
+   37:9789   error  'l' is defined but never used                                              no-unused-vars
+   37:9791   error  'i' is defined but never used                                              no-unused-vars
+   37:9793   error  'o' is defined but never used                                              no-unused-vars
+   37:9795   error  'u' is defined but never used                                              no-unused-vars
+   37:9797   error  's' is defined but never used                                              no-unused-vars
+   37:9970   error  'e' is defined but never used                                              no-unused-vars
+   37:9972   error  't' is defined but never used                                              no-unused-vars
+   37:9974   error  'n' is defined but never used                                              no-unused-vars
+   37:9976   error  'r' is defined but never used                                              no-unused-vars
+   37:9978   error  'l' is defined but never used                                              no-unused-vars
+   37:9980   error  'i' is defined but never used                                              no-unused-vars
+   37:9982   error  'o' is defined but never used                                              no-unused-vars
+   37:9984   error  'u' is defined but never used                                              no-unused-vars
+   37:9986   error  's' is defined but never used                                              no-unused-vars
+   37:10038  error  'e' is defined but never used                                              no-unused-vars
+   37:10040  error  't' is defined but never used                                              no-unused-vars
+   37:10042  error  'n' is defined but never used                                              no-unused-vars
+   37:10044  error  'r' is defined but never used                                              no-unused-vars
+   37:10046  error  'l' is defined but never used                                              no-unused-vars
+   37:10048  error  'i' is defined but never used                                              no-unused-vars
+   37:10050  error  'o' is defined but never used                                              no-unused-vars
+   37:10052  error  'u' is defined but never used                                              no-unused-vars
+   37:10054  error  's' is defined but never used                                              no-unused-vars
+   37:11886  error  Empty block statement                                                      no-empty
+   37:19766  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:20108  error  Invalid typeof comparison value                                            valid-typeof
+   37:20282  error  Invalid typeof comparison value                                            valid-typeof
+   37:22147  error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   37:27687  error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   37:29153  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   37:33253  error  Expected a 'break' statement before 'case'                                 no-fallthrough
+   37:33440  error  Expected a 'break' statement before 'case'                                 no-fallthrough
+   37:34557  error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   37:36002  error  Expected a 'break' statement before 'case'                                 no-fallthrough
+   37:37432  error  Unexpected control character(s) in regular expression: \x00                no-control-regex
+   38:1506   error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   38:1606   error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   38:14646  error  Expected a 'break' statement before 'case'                                 no-fallthrough
+   38:15102  error  Unexpected constant condition                                              no-constant-condition
+   38:15693  error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   38:22234  error  Empty block statement                                                      no-empty
+   38:22243  error  Empty block statement                                                      no-empty
+   38:25611  error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   38:26474  error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   40:3962   error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   40:5084   error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   40:12846  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:12867  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:12937  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:13119  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:13221  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:13301  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:13325  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:13377  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:13732  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:15914  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:16193  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:16639  error  Unnecessary escape character: \/                                           no-useless-escape
+   40:17509  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:17818  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:25815  error  Empty block statement                                                      no-empty
+   40:25850  error  Expected a 'break' statement before 'case'                                 no-fallthrough
+   40:29918  error  Do not access Object.prototype method 'hasOwnProperty' from target object  no-prototype-builtins
+   40:30895  error  't' is defined but never used                                              no-unused-vars
+   40:30897  error  'n' is defined but never used                                              no-unused-vars
+   40:30924  error  't' is defined but never used                                              no-unused-vars
+   40:30926  error  'n' is defined but never used                                              no-unused-vars
+   40:34606  error  Unexpected constant condition                                              no-constant-condition
+   40:39101  error  Unexpected constant condition                                              no-constant-condition
+   40:39391  error  Unexpected constant condition                                              no-constant-condition
+   40:42380  error  Empty block statement                                                      no-empty
+   40:52794  error  Expected a conditional expression and instead saw an assignment            no-cond-assign
+   40:54193  error  'Xs' is a function                                                         no-func-assign
+   40:54199  error  'Zs' is a function                                                         no-func-assign
+   40:55117  error  '__REACT_DEVTOOLS_GLOBAL_HOOK__' is not defined                            no-undef
+   40:55216  error  Empty block statement                                                      no-empty
+   40:57249  error  '__REACT_DEVTOOLS_GLOBAL_HOOK__' is not defined                            no-undef
+   40:57306  error  '__REACT_DEVTOOLS_GLOBAL_HOOK__' is not defined                            no-undef
+  158:12729  error  'm' is defined but never used                                              no-unused-vars
+
+d:\prompt wars\src\__tests__\Card.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\SectionTitle.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+  8:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\StatCard.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+  8:3  error  'expect' is not defined  no-undef
+  9:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\accessibility.test.jsx
+  6:1  error  'test' is not defined  no-undef
+
+d:\prompt wars\src\__tests__\app.test.jsx
+  5:1  error  'test' is not defined    no-undef
+  7:3  error  'expect' is not defined  no-undef
+
+d:\prompt wars\src\utils\api.js
+  16:65  error  'process' is not defined  no-undef
+
+✖ 201 problems (201 errors, 0 warnings)
+
