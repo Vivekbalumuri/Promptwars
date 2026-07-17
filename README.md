@@ -1,3 +1,18 @@
+# Prompt Wars Dashboard — CI + Tests scaffold
+
+This repository now includes basic linting, formatting, and test scaffolding.
+
+Quick commands:
+
+```bash
+npm install
+npm run lint
+npm run test
+npm run test:coverage
+npm run format
+```
+
+CI: A GitHub Actions workflow runs linting and tests on push/PR.
 # 🏟️ StadiumOpsControl: Tactical Venue Intelligence Console
 
 A premium, military-grade operational command console engineered for stadium security directors, emergency responders, and venue logistics managers during high-impact international fixtures (e.g., FIFA World Cup 2026). 

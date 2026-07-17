@@ -27,6 +27,11 @@ import {
   Radio,
   Zap
 } from "lucide-react";
+import './src/styles.css';
+import SectionTitle from './src/components/SectionTitle';
+import Card from './src/components/Card';
+import StatCard from './src/components/StatCard';
+import { callGeminiSafe } from './src/utils/api';
 
 // ---------------------------------------------------------------------------
 // Enterprise Technical Layout Design System (Precision Minimalist Theme)
@@ -110,35 +115,7 @@ function fmtClock(min) {
   return `${min - 1}'`;
 }
 
-// ---------------------------------------------------------------------------
-// NETWORK COMMUNICATIONS ROUTER LAYER (GEMINI CONTEXT)
-// ---------------------------------------------------------------------------
-async function callGeminiLiveAPI(promptText, mode = "json") {
-  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || process.env.REACT_APP_GEMINI_API_KEY;
-  if (!GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY is not configured.");
-  }
-  const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
-
-  const requestBody = { contents: [{ parts: [{ text: promptText }] }] };
-  if (mode === "json") { requestBody.generationConfig = { responseMimeType: "application/json" }; }
-
-  const res = await fetch(URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(requestBody),
-  });
-
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.error?.message || `HTTP error! status: ${res.status}`);
-  }
-
-  const data = await res.json();
-  const contentText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!contentText) { throw new Error("Invalid or empty response payload."); }
-  return contentText;
-}
+// Network API callers are implemented in `src/utils/api.js` (callGeminiSafe)
 
 function stripFence(text) {
   return text.replace(/```json/gi, "").replace(/```/g, "").trim();
@@ -151,6 +128,7 @@ const TABS = [
   { id: "incidents", label: "Operations Log", icon: ClipboardList },
   { id: "comms", label: "Radio Comms", icon: MessageSquare },
 ];
+
 
 export default function StadiumOpsControl() {
   const [tab, setTab] = useState("overview");
@@ -208,17 +186,20 @@ export default function StadiumOpsControl() {
     active: true
   });
 
-  const staffOnDuty = gates.filter((g) => g.open).reduce((s, g) => s + g.staff, 0) + 54;
+  const staffOnDuty = React.useMemo(() => gates.filter((g) => g.open).reduce((s, g) => s + g.staff, 0) + 54, [gates]);
+  const flowRateRef = useRef(flowRate);
+  useEffect(() => { flowRateRef.current = flowRate; }, [flowRate]);
 
   useEffect(() => {
+    // Single persistent interval; read latest flowRate from ref to avoid re-creating the timer.
     const iv = setInterval(() => {
       setGates((prev) =>
         prev.map((g) => {
           if (!g.open) return g;
-          const rateModifier = flowRate / 800;
+          const rateModifier = flowRateRef.current / 800;
           const drift = (Math.random() - 0.38) * 16 * rateModifier;
           const next = Math.min(98, Math.max(6, g.density + drift));
-          const trend = next - g.density > 2 ? "rising" : g.density - next > 2 ? "falling" : "steady";
+          const trend = next - g.density > 2 ? 'rising' : g.density - next > 2 ? 'falling' : 'steady';
           const queue = Math.max(1, Math.round((next * 1.8) / (g.staff || 1)));
           return { ...g, density: Math.round(next), queue, trend };
         })
@@ -227,12 +208,16 @@ export default function StadiumOpsControl() {
       setSeatsFilled((prev) => {
         const room = CAPACITY * 0.96 - prev;
         const delta = Math.max(0, Math.round(room * 0.035 + (Math.random() - 0.28) * 110));
-        setFlowRate(Math.max(0, Math.round(delta * 16.4)));
+        setFlowRate((_) => {
+          const newFlow = Math.max(0, Math.round(delta * 16.4));
+          flowRateRef.current = newFlow;
+          return newFlow;
+        });
         return Math.min(Math.round(CAPACITY * 0.96), prev + delta);
       });
     }, 4000);
     return () => clearInterval(iv);
-  }, [flowRate]);
+  }, []);
 
   const snapshot = useCallback(
     () => ({
@@ -260,7 +245,7 @@ export default function StadiumOpsControl() {
     const prompt = `Generate venue intelligence summary JSON for match minute ${snap.matchMinute}. Data: ${JSON.stringify(snap)}`;
     
     try {
-      const raw = await callGeminiLiveAPI(prompt, "json");
+      const raw = await callGeminiSafe(prompt, "json");
       const parsed = JSON.parse(stripFence(raw));
       setBriefs((prev) => [
         { id: Date.now(), time: fmtClock(matchMinute), summary: parsed.summary, alerts: parsed.alerts || [] },
@@ -303,7 +288,7 @@ export default function StadiumOpsControl() {
 
     try {
       const prompt = `Context: ${JSON.stringify(snapshot())}. Question: ${q}`;
-      const raw = await callGeminiLiveAPI(prompt, "text");
+      const raw = await callGeminiSafe(prompt, "text");
       setChatMessages((prev) => [...prev, { role: "ai", text: raw.trim() }]);
     } catch (e) {
       let fallbackResponse = `Analytical query processed against active telemetry arrays. Operational frameworks confirm performance thresholds remain inside expected variance windows. Global field staff tracking stands at ${staffOnDuty} responders across all sectors.`;
@@ -329,7 +314,7 @@ export default function StadiumOpsControl() {
     ]`;
 
     try {
-      const raw = await callGeminiLiveAPI(prompt, "json");
+      const raw = await callGeminiSafe(prompt, "json");
       const parsed = JSON.parse(stripFence(raw));
       if (Array.isArray(parsed)) {
         setChannelHistories(prev => ({
@@ -368,7 +353,7 @@ export default function StadiumOpsControl() {
     Generate a 1-sentence highly professional, technical, authoritative response acknowledgement from the perspective of that specific agency field unit. Do not include quotes.`;
 
     try {
-      const rawReply = await callGeminiLiveAPI(prompt, "text");
+      const rawReply = await callGeminiSafe(prompt, "text");
       let respondentName = "Field Dispatch Echo";
       if (activeChannel === "gates") respondentName = "Turnstile Control Sector C";
       if (activeChannel === "security_mgr") respondentName = "Security Supervisor Main";
@@ -420,7 +405,7 @@ export default function StadiumOpsControl() {
 
     try {
       const prompt = `Draft structured incident log JSON for: "${t}" at ${incidentLocation}`;
-      const raw = await callGeminiLiveAPI(prompt, "json");
+      const raw = await callGeminiSafe(prompt, "json");
       const parsed = JSON.parse(stripFence(raw));
       
       const entry = {
@@ -530,7 +515,7 @@ export default function StadiumOpsControl() {
   };
 
   return (
-    <div style={{ background: C.bg, color: C.text, minHeight: "100vh", fontFamily: "system-ui, -apple-system, sans-serif", paddingBottom: 40 }}>
+    <main role="main" aria-label="Stadium Operations Control" style={{ background: C.bg, color: C.text, minHeight: "100vh", fontFamily: "system-ui, -apple-system, sans-serif", paddingBottom: 40 }}>
       
       {/* Top Professional Operational Navigation Strip */}
       <div style={{ borderBottom: `1px solid ${C.border}`, background: C.panel, padding: "14px 24px" }}>
@@ -717,7 +702,7 @@ export default function StadiumOpsControl() {
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -819,8 +804,8 @@ function CommsHubView({ channels, activeChannel, setActiveChannel, channelInputs
           </div>
 
           <div style={{ padding: 12, borderTop: `1px solid ${C.border}`, background: "#161B22" }}>
-            <div style={{ display: "flex", gap: 6 }}>
-              <input 
+              <div style={{ display: "flex", gap: 6 }}>
+              <input aria-label={`Broadcast message to ${selectedChan?.label}`} 
                 value={channelInputs[activeChannel]}
                 onChange={(e) => {
                   const val = e.target.value;
@@ -830,7 +815,7 @@ function CommsHubView({ channels, activeChannel, setActiveChannel, channelInputs
                 placeholder={`BROADCAST OVERRIDE MESSAGE TO ${selectedChan?.label}...`} 
                 style={{ flex: 1, fontSize: 11, background: "#000", color: "#FFF", padding: "8px 12px", border: `1px solid ${C.border}`, outline: "none" }}
               />
-              <button onClick={sendRadioMessage} disabled={channelLoading} style={{ background: "transparent", border: `1px solid ${C.borderThick}`, padding: "0 14px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <button aria-label="Send broadcast message" onClick={sendRadioMessage} disabled={channelLoading} style={{ background: "transparent", border: `1px solid ${C.borderThick}`, padding: "0 14px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                 {channelLoading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} color={C.accent} />}
               </button>
             </div>
@@ -842,41 +827,7 @@ function CommsHubView({ channels, activeChannel, setActiveChannel, channelInputs
   );
 }
 
-// ---------------------------------------------------------------------------
-// Standard Sub-System Core Elements
-// ---------------------------------------------------------------------------
-function SectionTitle({ children, action }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, paddingBottom: 6, borderBottom: `1px solid ${C.border}` }}>
-      <h2 style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.01em", margin: 0, color: "#FFF", display: "flex", alignItems: "center", gap: 6 }}>
-        {children}
-      </h2>
-      {action}
-    </div>
-  );
-}
-
-function Card({ children, style }) {
-  return (
-    <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 3, padding: 14, boxSizing: "border-box", ...style }}>
-      {children}
-    </div>
-  );
-}
-
-function StatCard({ label, value, sub, warn, alertActive }) {
-  let indicatorColor = C.border;
-  if (warn) indicatorColor = SEVERITY.caution.border;
-  if (alertActive) indicatorColor = SEVERITY.critical.border;
-
-  return (
-    <Card style={{ borderTop: `2px solid ${indicatorColor}` }}>
-      <div style={{ fontSize: 10, fontWeight: 600, color: C.muted, letterSpacing: "0.02em" }}>{label}</div>
-      <div style={{ fontSize: 20, fontWeight: 700, marginTop: 4, color: "#FFF" }}>{value}</div>
-      {sub && <div style={{ fontSize: 11, color: alertActive ? SEVERITY.critical.color : warn ? SEVERITY.caution.color : C.muted, marginTop: 4, fontWeight: 600 }}>{sub}</div>}
-    </Card>
-  );
-}
+// Core UI primitives are provided as separate components in `src/components`.
 
 function Overview({ avgLoad, seatsFilled, openGates, closedGates, criticalGates, cautionGates, flowRate, latestBrief, briefLoading, onOpenAssistant, sevPill, weather }) {
   const occupancyPct = Math.round((seatsFilled / CAPACITY) * 100);
@@ -903,7 +854,7 @@ function Overview({ avgLoad, seatsFilled, openGates, closedGates, criticalGates,
             </div>
             <div>
               <div style={{ fontSize: 10, fontWeight: 700, color: C.accent, letterSpacing: "0.04em" }}>AUTOMATED LOG COMPILER EXECUTIVE BROADCAST BRIEFING</div>
-              <div style={{ fontSize: 12, lineHeight: 1.45, marginTop: 4, color: "#E2E8F0" }}>
+              <div style={{ fontSize: 12, lineHeight: 1.45, marginTop: 4, color: "#E2E8F0" }} aria-live="polite">
                 {briefLoading && !latestBrief ? "Constructing data tree structures from active telemetry matrix models..." : latestBrief?.summary}
               </div>
             </div>
@@ -1000,9 +951,9 @@ function AssistantView({ briefs, briefLoading, generateBrief, chatMessages, chat
             </div>
           )}
           <div style={{ padding: 10, borderBottom: `1px solid ${C.border}`, background: "#151920" }}>
-            <div style={{ display: "flex", gap: 6 }}>
-              <input value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && askAI()} placeholder="PROMPT AI CORE ENGINE AGENTS..." style={{ flex: 1, fontSize: 11, background: "#0D0F12", color: "#FFF", padding: "8px 10px", border: `1px solid ${C.border}`, outline: "none" }} />
-              <button onClick={askAI} disabled={chatLoading} style={{ width: 36, background: "transparent", border: `1px solid ${C.borderThick}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>{chatLoading ? <Loader2 size={13} color="#fff" className="animate-spin" /> : <Send size={13} color={C.accent} />}</button>
+              <div style={{ display: "flex", gap: 6 }}>
+              <input aria-label="AI prompt input" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && askAI()} placeholder="PROMPT AI CORE ENGINE AGENTS..." style={{ flex: 1, fontSize: 11, background: "#0D0F12", color: "#FFF", padding: "8px 10px", border: `1px solid ${C.border}`, outline: "none" }} />
+              <button aria-label="Send AI prompt" onClick={askAI} disabled={chatLoading} style={{ width: 36, background: "transparent", border: `1px solid ${C.borderThick}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>{chatLoading ? <Loader2 size={13} color="#fff" className="animate-spin" /> : <Send size={13} color={C.accent} />}</button>
             </div>
           </div>
           <div className="custom-scrollbar" style={{ padding: 14, display: "flex", flexDirection: "column", gap: 8, maxHeight: "220px", overflowY: "auto", background: "#0E1217" }}>
@@ -1046,17 +997,19 @@ function IncidentsView({ incidentType, setIncidentType, incidentLocation, setInc
       <Card style={{ marginBottom: 20 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
           <div>
-            <select value={incidentType} onChange={(e) => setIncidentType(e.target.value)} style={{ width: "100%", fontSize: 12, background: "#000", color: "#FFF", padding: "8px", border: `1px solid ${C.border}` }}>
+            <label style={{ display: 'none' }} htmlFor="incidentTypeSelect">Incident Type</label>
+            <select id="incidentTypeSelect" aria-label="Incident type" value={incidentType} onChange={(e) => setIncidentType(e.target.value)} style={{ width: "100%", fontSize: 12, background: "#000", color: "#FFF", padding: "8px", border: `1px solid ${C.border}` }}>
               {INCIDENT_TYPES.map((t) => <option key={t} value={t}>{t.toUpperCase()} PROTOCOL</option>)}
             </select>
           </div>
           <div>
-            <select value={incidentLocation} onChange={(e) => setIncidentLocation(e.target.value)} style={{ width: "100%", fontSize: 12, background: "#000", color: "#FFF", padding: "8px", border: `1px solid ${C.border}` }}>
+            <label style={{ display: 'none' }} htmlFor="incidentLocationSelect">Incident Location</label>
+            <select id="incidentLocationSelect" aria-label="Incident location" value={incidentLocation} onChange={(e) => setIncidentLocation(e.target.value)} style={{ width: "100%", fontSize: 12, background: "#000", color: "#FFF", padding: "8px", border: `1px solid ${C.border}` }}>
               {GATES_SEED.map((g) => <option key={g} value={g}>{g.toUpperCase()}</option>)}
             </select>
           </div>
         </div>
-        <textarea value={incidentText} onChange={(e) => setIncidentText(e.target.value)} placeholder="FILE COMPREHENSIVE NARRATIVE DETAILS..." style={{ width: "100%", minHeight: 70, fontSize: 12, background: "#000", color: "#FFF", padding: 10, border: `1px solid ${C.border}` }} />
+        <textarea aria-label="Incident details" value={incidentText} onChange={(e) => setIncidentText(e.target.value)} placeholder="FILE COMPREHENSIVE NARRATIVE DETAILS..." style={{ width: "100%", minHeight: 70, fontSize: 12, background: "#000", color: "#FFF", padding: 10, border: `1px solid ${C.border}` }} />
         <button onClick={draftIncident} disabled={incidentLoading || !incidentText.trim()} style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 700, padding: "8px 14px", border: `1px solid ${C.borderThick}`, background: C.accentSoft, color: C.accent }}><FileSpreadsheet size={12} /> COMMIT DATA MANIFEST</button>
       </Card>
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

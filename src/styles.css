@@ -1,0 +1,13 @@
+/* Basic utility styles used by components */
+:root {
+  --bg: #12161A;
+  --panel: #1A1F26;
+  --text: #E2E8F0;
+  --muted: #8A99AD;
+  --accent: #38BDF8;
+}
+body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, sans-serif; }
+.custom-scrollbar::-webkit-scrollbar { width: 8px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #2C3540; border-radius: 6px; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 10px; border-radius:4px; cursor:pointer; }
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
